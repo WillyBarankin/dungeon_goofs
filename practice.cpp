@@ -1,5 +1,10 @@
 #include <random>
+#ifdef _WIN32
+#include <curses.h>
+#else
 #include <ncurses.h>
+#endif
+
 
 using namespace std;
 
@@ -20,7 +25,7 @@ int getSpaceLeft(int bs_ch, int box_pos_y, int box_pos_x, int box_height, int bo
 	{
 		for (int k = 0; k < box_length; k++)
 		{
-			int ch_ar[box_length];
+			vector<int> ch_ar(box_length);
 			ch_ar[k] = (mvinch(box_pos_y+g, box_pos_x+k) & A_CHARTEXT);
 
 			if (ch_ar[k] == bs_ch)
@@ -68,12 +73,12 @@ void launchGame(int row, int col)
 		mvvline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-1), getRandomNumber(box_pos_X1+1, box_pos_X2-1), 'f' | COLOR_PAIR(5), 1);
 	}
 
-	int array_size  = obsticles_n/2;
-	int char_pos_xx[array_size];
-	int char_pos_yy[array_size];
-	int ch[array_size];
+	int unit_count  = obsticles_n/2;
+	vector<int>	char_pos_xx(unit_count);
+	vector<int>	char_pos_yy(unit_count);
+	vector<int>	ch(unit_count);
 
-	for (int i = 0; i< array_size; i++)
+	for (int i = 0; i< unit_count; i++)
 	{
 		char_pos_yy[i] = getRandomNumber(box_pos_Y1+2, box_pos_Y2-1);
 		char_pos_xx[i] = getRandomNumber(box_pos_X1+2, box_pos_X2-1);
@@ -91,7 +96,7 @@ void launchGame(int row, int col)
 
 	while (1)
 	{
-		for (int j = 0; j < array_size; j++)
+		for (int j = 0; j < unit_count; j++)
 		{
 			int old_pos_x = char_pos_xx[j];
 			int old_pos_y = char_pos_yy[j];
