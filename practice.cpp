@@ -1,0 +1,220 @@
+#include <random>
+#include <ncurses.h>
+
+using namespace std;
+
+int getRandomNumber(int param_a, int param_b)
+{
+	random_device rnd_dv;
+	default_random_engine random(rnd_dv());
+	uniform_int_distribution<int> distrib(param_a, param_b);
+
+	return(distrib(random));
+}
+
+int getSpaceLeft(int bs_ch, int box_pos_y, int box_pos_x, int box_height, int box_length) 
+{
+	int ch_left = 0;
+	 
+	for (int g = 0; g < box_height; g++)
+	{
+		for (int k = 0; k < box_length; k++)
+		{
+			int ch_ar[box_length];
+			ch_ar[k] = (mvinch(box_pos_y+g, box_pos_x+k) & A_CHARTEXT);
+
+			if (ch_ar[k] == bs_ch)
+			{
+				ch_left++;
+			}
+		}
+	}
+
+	return (ch_left);
+}
+
+void launchGame(int row, int col)
+{
+	start_color();
+	use_default_colors();
+
+	init_pair(1, COLOR_BLACK, COLOR_RED);
+	init_pair(2, -1, -1);
+	init_pair(3, COLOR_WHITE, COLOR_BLUE);
+	init_pair(4, COLOR_BLACK, COLOR_WHITE);
+	init_pair(5, COLOR_BLACK, COLOR_GREEN);
+
+	int box_length = getRandomNumber(6, col);
+	int box_height = getRandomNumber(4, row-2);
+
+	int box_pos_Y1 = (row - box_height)/2;
+	int box_pos_Y2 = (row + box_height)/2;
+	int box_pos_X1 = (col - box_length)/2;
+	int box_pos_X2 = (col + box_length)/2;
+
+	attron(COLOR_PAIR(1));
+	mvhline(box_pos_Y1, box_pos_X1, '#', box_length);
+	mvhline(box_pos_Y2, box_pos_X1+1, '#', box_length);
+	mvvline(box_pos_Y1+1, box_pos_X1, '#', box_height);
+	mvvline(box_pos_Y1, box_pos_X2, '#', box_height);
+
+	int obsticles_n = (box_length + box_height)/4;
+
+	for (int i=0; i <= obsticles_n; i++)
+	{
+		attron(COLOR_PAIR(4));
+		mvhline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-1), getRandomNumber(box_pos_X1+1, box_pos_X2-4), 'X', getRandomNumber(1, 4));
+		mvvline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-3), getRandomNumber(box_pos_X1+1, box_pos_X2-1), 'X', getRandomNumber(1, 3));
+		mvvline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-1), getRandomNumber(box_pos_X1+1, box_pos_X2-1), 'f' | COLOR_PAIR(5), 1);
+	}
+
+	int array_size  = obsticles_n/2;
+	int char_pos_xx[array_size];
+	int char_pos_yy[array_size];
+	int ch[array_size];
+
+	for (int i = 0; i< array_size; i++)
+	{
+		char_pos_yy[i] = getRandomNumber(box_pos_Y1+2, box_pos_Y2-1);
+		char_pos_xx[i] = getRandomNumber(box_pos_X1+2, box_pos_X2-1);
+		ch[i] = (mvinch(char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
+
+		while (ch[i] == 35 || ch[i] == 88 || ch[i] == 64 || ch[i] == 102) 
+		{
+			char_pos_yy[i] = getRandomNumber(box_pos_Y1+2, box_pos_Y2-1);
+			char_pos_xx[i] = getRandomNumber(box_pos_X1+2, box_pos_X2-1);
+			ch[i] = (mvinch(char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
+		}
+
+		mvaddch(char_pos_yy[i], char_pos_xx[i], '@' | A_BOLD | COLOR_PAIR(3));
+	}
+
+	while (1)
+	{
+		for (int j = 0; j < array_size; j++)
+		{
+			int old_pos_x = char_pos_xx[j];
+			int old_pos_y = char_pos_yy[j];
+			char_pos_xx[j] = char_pos_xx[j] + getRandomNumber(-1, 1);
+			char_pos_yy[j] = char_pos_yy[j] + getRandomNumber(-1, 1);
+			ch[j] = (mvinch(char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
+
+			while ((old_pos_x == char_pos_xx[j] && old_pos_y == char_pos_yy[j]) || ch[j] == 88 || ch[j] == 35 || ch[j] == 64)
+			{
+				char_pos_xx[j] = old_pos_x + getRandomNumber(-1, 1);
+				char_pos_yy[j] = old_pos_y + getRandomNumber(-1, 1);
+				ch[j] = (mvinch(char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
+			}
+
+			mvaddch(char_pos_yy[j], char_pos_xx[j], '@' | A_BOLD | COLOR_PAIR(3));
+
+			mvaddch(old_pos_y, old_pos_x, '.' | COLOR_PAIR(2));
+		}
+
+		timeout(150);
+
+		int ch_left = getSpaceLeft(32, box_pos_Y1, box_pos_X1, box_height, box_length);
+		move(row-1, 1);
+		printw("Space left: %d", ch_left);
+		clrtoeol();
+		mvprintw(row-1, col-20, "Press 'q' to stop.", ch_left);
+		clrtoeol();
+
+		refresh();
+
+		char input = getch();
+		if (input == 'q' || ch_left == 0)
+		{
+			timeout(-1);
+			attron(COLOR_PAIR(1));
+			mvprintw(row-1, col-20, "Press 'q' to quit.", ch_left);
+			attron(COLOR_PAIR(2));
+			getch();
+			break;
+		}
+	}
+
+	timeout(-1);
+	clear();
+}
+
+int showMenu()
+{
+	char input;
+	noecho();
+
+	int y_row, x_col;
+	getmaxyx(stdscr, y_row, x_col);
+
+	int m_height, m_width, m_start_x, m_start_y;
+	m_height = 6;
+	m_width = 15;
+	m_start_x = x_col/2-m_width;
+	m_start_y = y_row/2-m_height;
+
+	WINDOW * m_win = newwin(m_height, m_width, m_start_y, m_start_x);
+	refresh();
+
+	box(m_win, 0, 0);
+	mvwprintw(m_win, 1, 1, "Main menu:");
+	mvwprintw(m_win, 2, 1, "1)New game");
+	mvwprintw(m_win, 3, 1, "2)Options");
+	mvwprintw(m_win, 4, 1, "3)Quit");
+	move(y_row-1, x_col-1);
+	wrefresh(m_win);
+
+	input = getch();
+
+	switch (input)
+	{
+		case '1':
+			clear();
+			mvprintw(y_row/2+1, x_col/2-m_width/2-9, "There's no game.");
+			refresh();
+			char key;
+			key = getch();
+			if (key == 'j')
+			{
+				clear();
+				launchGame(y_row, x_col);
+				refresh();
+				break;
+			}
+			break;
+
+		case '2':
+			clear();
+			mvprintw(y_row/2+1, x_col/2-m_width/2-11, "There are no options.");
+			refresh();
+			break;
+
+		case '3':
+			clear();
+			mvprintw(y_row/2, x_col/2-m_width/2-1, "OK");
+			refresh();
+			return (0);
+
+		default:
+			clear();
+			mvprintw(y_row/2+1, x_col/2-m_width/2-3, "ERROR");
+			refresh();
+	}
+
+	showMenu();
+
+	return(0);
+}		
+
+int main()
+{
+	initscr();
+	curs_set(0);
+
+	showMenu();
+	getch();
+
+	curs_set(1);
+	endwin();
+
+	return (0);
+}		
