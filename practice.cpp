@@ -44,8 +44,8 @@ void launchGame(int row, int col)
 	init_pair(4, COLOR_BLACK, COLOR_WHITE);
 	init_pair(5, COLOR_BLACK, COLOR_GREEN);
 
-	int box_length = getRandomNumber(6, col);
-	int box_height = getRandomNumber(4, row-2);
+	int box_length = getRandomNumber(6, col-1);
+	int box_height = getRandomNumber(5, row-3);
 
 	int box_pos_Y1 = (row - box_height)/2;
 	int box_pos_Y2 = (row + box_height)/2;
