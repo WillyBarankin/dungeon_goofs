@@ -52,18 +52,30 @@ void launchGame(int row, int col)
 	int box_pos_X1 = (col - box_length)/2;
 	int box_pos_X2 = (col + box_length)/2;
 
-	attron(COLOR_PAIR(1));
-	mvhline(box_pos_Y1, box_pos_X1, '#', box_length);
-	mvhline(box_pos_Y2, box_pos_X1+1, '#', box_length);
-	mvvline(box_pos_Y1+1, box_pos_X1, '#', box_height);
-	mvvline(box_pos_Y1, box_pos_X2, '#', box_height);
+	//attron(COLOR_PAIR(1));
+	//mvhline(box_pos_Y1, box_pos_X1, '#', box_length);
+	//mvhline(box_pos_Y2, box_pos_X1+1, '#', box_length);
+	//mvvline(box_pos_Y1+1, box_pos_X1, '#', box_height);
+	//mvvline(box_pos_Y1, box_pos_X2, '#', box_height);
+	//refresh();
+
+	WINDOW * g_winPtr = newwin(box_height, box_length, (row - box_height)/2, (col - box_length)/2);
+	int g_win_sy, g_win_my, g_win_sx, g_win_mx = 0;
+	getbegyx(g_winPtr, g_win_sy, g_win_sx);
+	getmaxyx(g_winPtr, g_win_my, g_win_mx);
+	box(g_winPtr, 1, 1);
+	wattron(g_winPtr, COLOR_PAIR(1));
+	wborder(g_winPtr, '#' ,'#' ,'#' ,'#' ,'#' ,'#' ,'#' ,'#');
+	wprintw(g_winPtr, "%d", mvwinch(g_winPtr, 1, 1) & A_CHARTEXT);
+	refresh();
+	wrefresh(g_winPtr);
 
 	int obsticles_n = (box_length + box_height)/4;
 
 	for (int i=0; i <= obsticles_n; i++)
 	{
 		attron(COLOR_PAIR(4));
-		mvhline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-1), getRandomNumber(box_pos_X1+1, box_pos_X2-4), 'X', getRandomNumber(1, 4));
+		mvhline(getRandomNumber(g_win_sy+1, g_win_my-1), getRandomNumber(g_win_sx+1, g_win_mx-4), 'X', getRandomNumber(1, 4));
 		mvvline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-3), getRandomNumber(box_pos_X1+1, box_pos_X2-1), 'X', getRandomNumber(1, 3));
 		mvvline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-1), getRandomNumber(box_pos_X1+1, box_pos_X2-1), 'f' | COLOR_PAIR(5), 1);
 	}
@@ -83,7 +95,7 @@ void launchGame(int row, int col)
 		{
 			char_pos_yy[i] = getRandomNumber(box_pos_Y1+2, box_pos_Y2-1);
 			char_pos_xx[i] = getRandomNumber(box_pos_X1+2, box_pos_X2-1);
-			ch[i] = (mvinch(char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
+			ch[i] = (mvwinch(g_winPtr, char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
 		}
 
 		mvaddch(char_pos_yy[i], char_pos_xx[i], '@' | A_BOLD | COLOR_PAIR(3));
@@ -103,7 +115,7 @@ void launchGame(int row, int col)
 			{
 				char_pos_xx[j] = old_pos_x + getRandomNumber(-1, 1);
 				char_pos_yy[j] = old_pos_y + getRandomNumber(-1, 1);
-				ch[j] = (mvinch(char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
+				ch[j] = (mvwinch(g_winPtr, char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
 			}
 
 			mvaddch(char_pos_yy[j], char_pos_xx[j], '@' | A_BOLD | COLOR_PAIR(3));
@@ -152,16 +164,16 @@ int showMenu()
 	m_start_x = x_col/2-m_width;
 	m_start_y = y_row/2-m_height;
 
-	WINDOW * m_win = newwin(m_height, m_width, m_start_y, m_start_x);
+	WINDOW * m_winPtr = newwin(m_height, m_width, m_start_y, m_start_x);
 	refresh();
 
-	box(m_win, 0, 0);
-	mvwprintw(m_win, 1, 1, "Main menu:");
-	mvwprintw(m_win, 2, 1, "1)New game");
-	mvwprintw(m_win, 3, 1, "2)Options");
-	mvwprintw(m_win, 4, 1, "3)Quit");
+	box(m_winPtr, 0, 0);
+	mvwprintw(m_winPtr, 1, 1, "Main menu:");
+	mvwprintw(m_winPtr, 2, 1, "1)New game");
+	mvwprintw(m_winPtr, 3, 1, "2)Options");
+	mvwprintw(m_winPtr, 4, 1, "3)Quit");
 	move(y_row-1, x_col-1);
-	wrefresh(m_win);
+	wrefresh(m_winPtr);
 
 	input = getch();
 
