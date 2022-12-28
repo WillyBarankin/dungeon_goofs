@@ -47,54 +47,42 @@ void launchGame(int row, int col)
 	int box_length = getRandomNumber(6, col-1);
 	int box_height = getRandomNumber(5, row-3);
 
-	int box_pos_Y1 = (row - box_height)/2;
-	int box_pos_Y2 = (row + box_height)/2;
-	int box_pos_X1 = (col - box_length)/2;
-	int box_pos_X2 = (col + box_length)/2;
-
-	//attron(COLOR_PAIR(1));
-	//mvhline(box_pos_Y1, box_pos_X1, '#', box_length);
-	//mvhline(box_pos_Y2, box_pos_X1+1, '#', box_length);
-	//mvvline(box_pos_Y1+1, box_pos_X1, '#', box_height);
-	//mvvline(box_pos_Y1, box_pos_X2, '#', box_height);
-	//refresh();
-
-	WINDOW * g_winPtr = newwin(box_height, box_length, (row - box_height)/2, (col - box_length)/2);
+	WINDOW * g_winPtr = newwin(getRandomNumber(5, row), getRandomNumber(6, col), (row - box_height)/2, (col - box_length)/2);
 	int g_win_sy, g_win_my, g_win_sx, g_win_mx = 0;
 	getbegyx(g_winPtr, g_win_sy, g_win_sx);
 	getmaxyx(g_winPtr, g_win_my, g_win_mx);
 	box(g_winPtr, 1, 1);
 	wattron(g_winPtr, COLOR_PAIR(1));
 	wborder(g_winPtr, '#' ,'#' ,'#' ,'#' ,'#' ,'#' ,'#' ,'#');
-	wprintw(g_winPtr, "%d", mvwinch(g_winPtr, 1, 1) & A_CHARTEXT);
+	wprintw(g_winPtr, "%d", mvwinch(g_winPtr, 0, 5) & A_CHARTEXT);
 	refresh();
 	wrefresh(g_winPtr);
 
-	int obsticles_n = (box_length + box_height)/4;
+	int obsticles_n = (g_win_mx + g_win_my)/4;
 
 	for (int i=0; i <= obsticles_n; i++)
 	{
 		attron(COLOR_PAIR(4));
 		mvhline(getRandomNumber(g_win_sy+1, g_win_my-1), getRandomNumber(g_win_sx+1, g_win_mx-4), 'X', getRandomNumber(1, 4));
-		mvvline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-3), getRandomNumber(box_pos_X1+1, box_pos_X2-1), 'X', getRandomNumber(1, 3));
-		mvvline(getRandomNumber(box_pos_Y1+1, box_pos_Y2-1), getRandomNumber(box_pos_X1+1, box_pos_X2-1), 'f' | COLOR_PAIR(5), 1);
+		mvvline(getRandomNumber(g_win_sy+1, g_win_my-3), getRandomNumber(g_win_sx+1, g_win_mx-1), 'X', getRandomNumber(1, 3));
+		mvvline(getRandomNumber(g_win_sy+1, g_win_my-1), getRandomNumber(g_win_sx+1, g_win_mx-1), 'f' | COLOR_PAIR(5), 1);
 	}
 
-	int array_size  = obsticles_n/2;
+	int array_size = obsticles_n/2;
 	int char_pos_xx[array_size];
 	int char_pos_yy[array_size];
 	int ch[array_size];
 
 	for (int i = 0; i< array_size; i++)
 	{
-		char_pos_yy[i] = getRandomNumber(box_pos_Y1+2, box_pos_Y2-1);
-		char_pos_xx[i] = getRandomNumber(box_pos_X1+2, box_pos_X2-1);
+		char_pos_yy[i] = getRandomNumber(g_win_sy+2, g_win_my-1);
+		char_pos_xx[i] = getRandomNumber(g_win_sx+2, g_win_mx-1);
 		ch[i] = (mvinch(char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
 
 		while (ch[i] == 35 || ch[i] == 88 || ch[i] == 64 || ch[i] == 102) 
 		{
-			char_pos_yy[i] = getRandomNumber(box_pos_Y1+2, box_pos_Y2-1);
-			char_pos_xx[i] = getRandomNumber(box_pos_X1+2, box_pos_X2-1);
+			char_pos_yy[i] = getRandomNumber(g_win_sy+2, g_win_my-1);
+			char_pos_xx[i] = getRandomNumber(g_win_sx+2, g_win_mx-1);
 			ch[i] = (mvwinch(g_winPtr, char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
 		}
 
@@ -109,7 +97,7 @@ void launchGame(int row, int col)
 			int old_pos_y = char_pos_yy[j];
 			char_pos_xx[j] = char_pos_xx[j] + getRandomNumber(-1, 1);
 			char_pos_yy[j] = char_pos_yy[j] + getRandomNumber(-1, 1);
-			ch[j] = (mvinch(char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
+			ch[j] = (mvwinch(g_winPtr, char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
 
 			while ((old_pos_x == char_pos_xx[j] && old_pos_y == char_pos_yy[j]) || ch[j] == 88 || ch[j] == 35 || ch[j] == 64)
 			{
@@ -125,7 +113,7 @@ void launchGame(int row, int col)
 
 		timeout(150);
 
-		int ch_left = getSpaceLeft(32, box_pos_Y1, box_pos_X1, box_height, box_length);
+		int ch_left = getSpaceLeft(32, g_win_sy, g_win_sx, box_height, box_length);
 		move(row-1, 1);
 		printw("Space left: %d", ch_left);
 		clrtoeol();
