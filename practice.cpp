@@ -1,10 +1,5 @@
 #include <random>
-#ifdef _WIN32
 #include <curses.h>
-#else
-#include <ncurses.h>
-#endif
-
 
 using namespace std;
 
