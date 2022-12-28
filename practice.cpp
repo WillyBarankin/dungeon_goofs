@@ -149,8 +149,8 @@ int showMenu()
 	int m_height, m_width, m_start_x, m_start_y;
 	m_height = 6;
 	m_width = 15;
-	m_start_x = x_col/2-m_width;
-	m_start_y = y_row/2-m_height;
+	m_start_x = x_col/2-m_width/2;
+	m_start_y = y_row/2-m_height/2;
 
 	WINDOW * m_win = newwin(m_height, m_width, m_start_y, m_start_x);
 	refresh();
@@ -169,7 +169,7 @@ int showMenu()
 	{
 		case '1':
 			clear();
-			mvprintw(y_row/2+1, x_col/2-m_width/2-9, "There's no game.");
+			mvprintw(y_row/2, x_col/2 - m_width/2, "There's no game.");
 			refresh();
 			char key;
 			key = getch();
@@ -180,23 +180,24 @@ int showMenu()
 				refresh();
 				break;
 			}
+			clear();
 			break;
 
 		case '2':
 			clear();
-			mvprintw(y_row/2+1, x_col/2-m_width/2-11, "There are no options.");
+			mvprintw(y_row/2 + m_height/2, x_col/2 - m_width/2 - 3, "There are no options.");
 			refresh();
 			break;
 
 		case '3':
 			clear();
-			mvprintw(y_row/2, x_col/2-m_width/2-1, "OK");
+			mvprintw(y_row/2, x_col/2, "OK");
 			refresh();
 			return (0);
 
 		default:
 			clear();
-			mvprintw(y_row/2+1, x_col/2-m_width/2-3, "ERROR");
+			mvprintw(y_row/2 + m_height/2, x_col/2 - m_width/2 + 5, "ERROR");
 			refresh();
 	}
 
