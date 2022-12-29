@@ -52,7 +52,6 @@ void launchGame(int row, int col)
 	getparyx(g_winPtr, g_win_sy, g_win_sx);
 	getmaxyx(g_winPtr, g_win_my, g_win_mx);
 
-	box(g_winPtr, 1, 1);
 	wattron(g_winPtr, COLOR_PAIR(1));
 	wborder(g_winPtr, '#' ,'#' ,'#' ,'#' ,'#' ,'#' ,'#' ,'#');
 	refresh();
@@ -74,6 +73,7 @@ void launchGame(int row, int col)
 	vector<int> char_pos_yy(unit_count);
 	vector<int> ch(unit_count);
 
+	// Place our goofs.
 	for (int i = 0; i< unit_count; i++)
 	{
 		char_pos_yy[i] = getRandomNumber(g_win_sy+2, g_win_my-1);
@@ -90,6 +90,7 @@ void launchGame(int row, int col)
 		mvwaddch(g_winPtr, char_pos_yy[i], char_pos_xx[i], '@' | A_BOLD | COLOR_PAIR(3));
 	}
 
+	// Moving goofs.
 	while (1)
 	{
 		for (int j = 0; j < unit_count; j++)
@@ -100,23 +101,37 @@ void launchGame(int row, int col)
 			char_pos_yy[j] = char_pos_yy[j] + getRandomNumber(-1, 1);
 			ch[j] = (mvwinch(g_winPtr, char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
 
-			while ((old_pos_x == char_pos_xx[j] && old_pos_y == char_pos_yy[j]) || ch[j] == (int) 'X' || ch[j] == (int) '#' || ch[j] == (int) '@')
+			while ((old_pos_x == char_pos_xx[j] && old_pos_y == char_pos_yy[j]) || ch[j] == (int) '#' || ch[j] == (int) 'X' || ch[j] == (int) '@' || ch[j] == (int) '$')
 			{
 				char_pos_xx[j] = old_pos_x + getRandomNumber(-1, 1);
 				char_pos_yy[j] = old_pos_y + getRandomNumber(-1, 1);
 				ch[j] = (mvwinch(g_winPtr, char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
 			}
 
-			mvwaddch(g_winPtr, char_pos_yy[j], char_pos_xx[j], '@' | A_BOLD | COLOR_PAIR(3));
+			if ((mvwinch(g_winPtr, old_pos_y, old_pos_x) & A_CHARTEXT) == (int)'$')
+			{
+				mvwaddch(g_winPtr, char_pos_yy[j], char_pos_xx[j], '$' | A_BOLD | COLOR_PAIR(3));
+			}
+			else if (ch[j] == (int)'f')
+			{
+				mvwaddch(g_winPtr, old_pos_y, old_pos_x, '$' | A_BOLD | COLOR_PAIR(3));
+				ch.push_back(unit_count++);
+				char_pos_yy.push_back(old_pos_y);
+				char_pos_xx.push_back(old_pos_x);
+			}
+			else
+			{
+				mvwaddch(g_winPtr, char_pos_yy[j], char_pos_xx[j], '@' | A_BOLD | COLOR_PAIR(3));
+			}
 
-			mvwaddch(g_winPtr, old_pos_y, old_pos_x, '.' | COLOR_PAIR(2));
+				mvwaddch(g_winPtr, old_pos_y, old_pos_x, '.' | COLOR_PAIR(2));
 		}
 
 		timeout(150);
 
 		int ch_left = getSpaceLeft(g_winPtr, 32, g_win_sy, g_win_sx, g_win_my, g_win_mx);
 		move(row-1, 1);
-		printw("Space left: %d", ch_left);
+		printw("Space left: %d	Unit count: %d", ch_left , unit_count);
 		clrtoeol();
 		mvprintw(row-1, col-20, "Press 'q' to stop.", ch_left);
 		clrtoeol();
@@ -160,8 +175,8 @@ int showMenu()
 	mvwprintw(m_winPtr, 2, 1, "1)New game");
 	mvwprintw(m_winPtr, 3, 1, "2)Options");
 	mvwprintw(m_winPtr, 4, 1, "3)Quit");
-	move(y_row-1, x_col-1);
 	refresh();
+	move(y_row-1, x_col-1);
 	wrefresh(m_winPtr);
 
 	input = getch();
@@ -170,7 +185,7 @@ int showMenu()
 	{
 		case '1':
 			clear();
-			mvprintw(y_row/2, x_col/2 - m_width/2, "There's no game.");
+			mvprintw(y_row/2, x_col/2 - 8, "There's no game.");
 			refresh();
 			char key;
 			key = getch();
@@ -186,19 +201,19 @@ int showMenu()
 
 		case '2':
 			clear();
-			mvprintw(y_row/2 + m_height/2, x_col/2 - m_width/2 - 3, "There are no options.");
+			mvprintw(y_row/2 + m_height/2, x_col/2 - 10, "There are no options.");
 			refresh();
 			break;
 
 		case '3':
 			clear();
-			mvprintw(y_row/2, x_col/2, "OK");
+			mvprintw(y_row/2, x_col/2 - 1, "OK");
 			refresh();
 			return (0);
 
 		default:
 			clear();
-			mvprintw(y_row/2 + m_height/2, x_col/2 - m_width/2 + 5, "ERROR");
+			mvprintw(y_row/2 + m_height/2, x_col/2 - 2, "ERROR");
 			refresh();
 	}
 
