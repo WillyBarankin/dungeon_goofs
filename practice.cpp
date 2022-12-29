@@ -111,6 +111,7 @@ void launchGame(int row, int col)
 			if ((mvwinch(g_winPtr, old_pos_y, old_pos_x) & A_CHARTEXT) == (int)'$')
 			{
 				mvwaddch(g_winPtr, char_pos_yy[j], char_pos_xx[j], '$' | A_BOLD | COLOR_PAIR(3));
+				mvwaddch(g_winPtr, old_pos_y, old_pos_x, '.' | COLOR_PAIR(2));
 			}
 			else if (ch[j] == (int)'f')
 			{
@@ -122,9 +123,9 @@ void launchGame(int row, int col)
 			else
 			{
 				mvwaddch(g_winPtr, char_pos_yy[j], char_pos_xx[j], '@' | A_BOLD | COLOR_PAIR(3));
+				mvwaddch(g_winPtr, old_pos_y, old_pos_x, '.' | COLOR_PAIR(2));
 			}
 
-				mvwaddch(g_winPtr, old_pos_y, old_pos_x, '.' | COLOR_PAIR(2));
 		}
 
 		timeout(150);
