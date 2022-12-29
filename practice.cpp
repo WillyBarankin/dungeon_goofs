@@ -47,6 +47,7 @@ void launchGame(int row, int col)
 	int box_length = getRandomNumber(6, col-1);
 	int box_height = getRandomNumber(5, row-3);
 
+	// Drawing the map.
 	WINDOW * g_winPtr = newwin(box_height, box_length, (row - box_height)/2, (col - box_length)/2);
 	int g_win_sy, g_win_my, g_win_sx, g_win_mx;
 	getparyx(g_winPtr, g_win_sy, g_win_sx);
@@ -56,10 +57,11 @@ void launchGame(int row, int col)
 	wborder(g_winPtr, '#' ,'#' ,'#' ,'#' ,'#' ,'#' ,'#' ,'#');
 	refresh();
 	wrefresh(g_winPtr);
+	
+	// Generating obstacles.
+	int obstacles_n = (g_win_mx + g_win_my)/4;
 
-	int obsticles_n = (g_win_mx + g_win_my)/4;
-
-	for (int i=0; i <= obsticles_n; i++)
+	for (int i=0; i <= obstacles_n; i++)
 	{
 		wattron(g_winPtr, COLOR_PAIR(4));
 		mvwhline(g_winPtr, getRandomNumber(g_win_sy+2, g_win_my-2), getRandomNumber(g_win_sx+2, g_win_mx-5), 'X', getRandomNumber(1, 4));
@@ -68,12 +70,12 @@ void launchGame(int row, int col)
 		wrefresh(g_winPtr);
 	}
 
-	int unit_count  = obsticles_n/2;
+	// Placing goofs.
+	int unit_count  = obstacles_n/2;
 	vector<int> char_pos_xx(unit_count);
 	vector<int> char_pos_yy(unit_count);
 	vector<int> ch(unit_count);
 
-	// Place our goofs.
 	for (int i = 0; i< unit_count; i++)
 	{
 		char_pos_yy[i] = getRandomNumber(g_win_sy+2, g_win_my-1);
