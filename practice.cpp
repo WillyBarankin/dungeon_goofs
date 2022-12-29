@@ -1,5 +1,5 @@
 #include <random>
-#include <ncurses.h>
+#include <curses.h>
 
 using namespace std;
 
@@ -20,7 +20,7 @@ int getSpaceLeft(int bs_ch, int box_pos_y, int box_pos_x, int box_height, int bo
 	{
 		for (int k = 0; k < box_length; k++)
 		{
-			int ch_ar[box_length];
+			vector<int> ch_ar(box_length);
 			ch_ar[k] = (mvinch(box_pos_y+g, box_pos_x+k) & A_CHARTEXT);
 
 			if (ch_ar[k] == bs_ch)
@@ -68,12 +68,12 @@ void launchGame(int row, int col)
 		mvvline(getRandomNumber(g_win_sy+1, g_win_my-1), getRandomNumber(g_win_sx+1, g_win_mx-1), 'f' | COLOR_PAIR(5), 1);
 	}
 
-	int array_size = obsticles_n/2;
-	int char_pos_xx[array_size];
-	int char_pos_yy[array_size];
-	int ch[array_size];
+	int unit_count  = obsticles_n/2;
+	vector<int>	char_pos_xx(unit_count);
+	vector<int>	char_pos_yy(unit_count);
+	vector<int>	ch(unit_count);
 
-	for (int i = 0; i< array_size; i++)
+	for (int i = 0; i< unit_count; i++)
 	{
 		char_pos_yy[i] = getRandomNumber(g_win_sy+2, g_win_my-1);
 		char_pos_xx[i] = getRandomNumber(g_win_sx+2, g_win_mx-1);
@@ -91,7 +91,7 @@ void launchGame(int row, int col)
 
 	while (1)
 	{
-		for (int j = 0; j < array_size; j++)
+		for (int j = 0; j < unit_count; j++)
 		{
 			int old_pos_x = char_pos_xx[j];
 			int old_pos_y = char_pos_yy[j];
@@ -149,8 +149,8 @@ int showMenu()
 	int m_height, m_width, m_start_x, m_start_y;
 	m_height = 6;
 	m_width = 15;
-	m_start_x = x_col/2-m_width;
-	m_start_y = y_row/2-m_height;
+	m_start_x = x_col/2-m_width/2;
+	m_start_y = y_row/2-m_height/2;
 
 	WINDOW * m_winPtr = newwin(m_height, m_width, m_start_y, m_start_x);
 	refresh();
@@ -169,7 +169,7 @@ int showMenu()
 	{
 		case '1':
 			clear();
-			mvprintw(y_row/2+1, x_col/2-m_width/2-9, "There's no game.");
+			mvprintw(y_row/2, x_col/2 - m_width/2, "There's no game.");
 			refresh();
 			char key;
 			key = getch();
@@ -180,23 +180,24 @@ int showMenu()
 				refresh();
 				break;
 			}
+			clear();
 			break;
 
 		case '2':
 			clear();
-			mvprintw(y_row/2+1, x_col/2-m_width/2-11, "There are no options.");
+			mvprintw(y_row/2 + m_height/2, x_col/2 - m_width/2 - 3, "There are no options.");
 			refresh();
 			break;
 
 		case '3':
 			clear();
-			mvprintw(y_row/2, x_col/2-m_width/2-1, "OK");
+			mvprintw(y_row/2, x_col/2, "OK");
 			refresh();
 			return (0);
 
 		default:
 			clear();
-			mvprintw(y_row/2+1, x_col/2-m_width/2-3, "ERROR");
+			mvprintw(y_row/2 + m_height/2, x_col/2 - m_width/2 + 5, "ERROR");
 			refresh();
 	}
 
