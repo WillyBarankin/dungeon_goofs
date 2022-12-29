@@ -80,7 +80,7 @@ void launchGame(int row, int col)
 		char_pos_xx[i] = getRandomNumber(g_win_sx+2, g_win_mx-1);
 		ch[i] = (mvwinch(g_winPtr, char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
 
-		while (ch[i] == 35 || ch[i] == 88 || ch[i] == 64 || ch[i] == 102) 
+		while (ch[i] == (int) '#' || ch[i] == (int) 'X' || ch[i] == (int) '@' || ch[i] == (int) 'f') 
 		{
 			char_pos_yy[i] = getRandomNumber(g_win_sy+2, g_win_my-1);
 			char_pos_xx[i] = getRandomNumber(g_win_sx+2, g_win_mx-1);
@@ -100,7 +100,7 @@ void launchGame(int row, int col)
 			char_pos_yy[j] = char_pos_yy[j] + getRandomNumber(-1, 1);
 			ch[j] = (mvwinch(g_winPtr, char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
 
-			while ((old_pos_x == char_pos_xx[j] && old_pos_y == char_pos_yy[j]) || ch[j] == 88 || ch[j] == 35 || ch[j] == 64)
+			while ((old_pos_x == char_pos_xx[j] && old_pos_y == char_pos_yy[j]) || ch[j] == (int) 'X' || ch[j] == (int) '#' || ch[j] == (int) '@')
 			{
 				char_pos_xx[j] = old_pos_x + getRandomNumber(-1, 1);
 				char_pos_yy[j] = old_pos_y + getRandomNumber(-1, 1);
