@@ -1,5 +1,6 @@
 #include <random>
 #include <curses.h>
+#include "practice.h"
 
 using namespace std;
 
@@ -21,16 +22,19 @@ int getSpaceLeft(WINDOW *win_nm, int bs_ch, int box_pos_y, int box_pos_x, int bo
 		for (int k = 0; k < box_length; k++)
 		{
 			vector<int> ch_ar(box_length);
-			ch_ar[k] = (mvwinch(win_nm, box_pos_y+g, box_pos_x+k) & A_CHARTEXT);
+			ch_ar[k] = mvwinch(win_nm, box_pos_y+g, box_pos_x+k) & A_CHARTEXT;
 
 			if (ch_ar[k] == bs_ch)
-			{
-				ch_left++;
-			}
+			ch_left++;
 		}
 	}
 
 	return (ch_left);
+}
+
+void getChar(std::vector<int>& ch, int i, WINDOW* g_winPtr, std::vector<int>& char_pos_yy, std::vector<int>& char_pos_xx)
+{
+	ch[i] = mvwinch(g_winPtr, char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT;
 }
 
 void launchGame(int row, int col)
@@ -80,13 +84,13 @@ void launchGame(int row, int col)
 	{
 		char_pos_yy[i] = getRandomNumber(g_win_sy+2, g_win_my-1);
 		char_pos_xx[i] = getRandomNumber(g_win_sx+2, g_win_mx-1);
-		ch[i] = (mvwinch(g_winPtr, char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
+		getChar(ch, i, g_winPtr, char_pos_yy, char_pos_xx);
 
 		while (ch[i] == (int) '#' || ch[i] == (int) 'X' || ch[i] == (int) '@' || ch[i] == (int) 'f') 
 		{
 			char_pos_yy[i] = getRandomNumber(g_win_sy+2, g_win_my-1);
 			char_pos_xx[i] = getRandomNumber(g_win_sx+2, g_win_mx-1);
-			ch[i] = (mvwinch(g_winPtr, char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT);
+			getChar(ch, i, g_winPtr, char_pos_yy, char_pos_xx);
 		}
 
 		mvwaddch(g_winPtr, char_pos_yy[i], char_pos_xx[i], '@' | A_BOLD | COLOR_PAIR(3));
@@ -95,27 +99,27 @@ void launchGame(int row, int col)
 	// Moving goofs.
 	while (1)
 	{
-		for (int j = 0; j < unit_count; j++)
+		for (int i = 0; i < unit_count; i++)
 		{
-			int old_pos_x = char_pos_xx[j];
-			int old_pos_y = char_pos_yy[j];
-			char_pos_xx[j] = char_pos_xx[j] + getRandomNumber(-1, 1);
-			char_pos_yy[j] = char_pos_yy[j] + getRandomNumber(-1, 1);
-			ch[j] = (mvwinch(g_winPtr, char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
+			int old_pos_x = char_pos_xx[i];
+			int old_pos_y = char_pos_yy[i];
+			char_pos_xx[i] = char_pos_xx[i] + getRandomNumber(-1, 1);
+			char_pos_yy[i] = char_pos_yy[i] + getRandomNumber(-1, 1);
+			getChar(ch, i, g_winPtr, char_pos_yy, char_pos_xx);
 
-			while ((old_pos_x == char_pos_xx[j] && old_pos_y == char_pos_yy[j]) || ch[j] == (int) '#' || ch[j] == (int) 'X' || ch[j] == (int) '@' || ch[j] == (int) '$')
+			while ((old_pos_x == char_pos_xx[i] && old_pos_y == char_pos_yy[i]) || ch[i] == (int) '#' || ch[i] == (int) 'X' || ch[i] == (int) '@' || ch[i] == (int) '$')
 			{
-				char_pos_xx[j] = old_pos_x + getRandomNumber(-1, 1);
-				char_pos_yy[j] = old_pos_y + getRandomNumber(-1, 1);
-				ch[j] = (mvwinch(g_winPtr, char_pos_yy[j], char_pos_xx[j]) & A_CHARTEXT);
+				char_pos_xx[i] = old_pos_x + getRandomNumber(-1, 1);
+				char_pos_yy[i] = old_pos_y + getRandomNumber(-1, 1);
+				getChar(ch, i, g_winPtr, char_pos_yy, char_pos_xx);
 			}
 
 			if ((mvwinch(g_winPtr, old_pos_y, old_pos_x) & A_CHARTEXT) == (int)'$')
 			{
-				mvwaddch(g_winPtr, char_pos_yy[j], char_pos_xx[j], '$' | A_BOLD | COLOR_PAIR(3));
+				mvwaddch(g_winPtr, char_pos_yy[i], char_pos_xx[i], '$' | A_BOLD | COLOR_PAIR(3));
 				mvwaddch(g_winPtr, old_pos_y, old_pos_x, '.' | COLOR_PAIR(2));
 			}
-			else if (ch[j] == (int)'f')
+			else if (ch[i] == (int)'f')
 			{
 				mvwaddch(g_winPtr, old_pos_y, old_pos_x, '$' | A_BOLD | COLOR_PAIR(3));
 				ch.push_back(unit_count++);
@@ -124,7 +128,7 @@ void launchGame(int row, int col)
 			}
 			else
 			{
-				mvwaddch(g_winPtr, char_pos_yy[j], char_pos_xx[j], '@' | A_BOLD | COLOR_PAIR(3));
+				mvwaddch(g_winPtr, char_pos_yy[i], char_pos_xx[i], '@' | A_BOLD | COLOR_PAIR(3));
 				mvwaddch(g_winPtr, old_pos_y, old_pos_x, '.' | COLOR_PAIR(2));
 			}
 
