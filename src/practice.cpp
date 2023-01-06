@@ -1,6 +1,5 @@
 #include <random>
 #include <curses.h>
-#include "practice.h"
 
 using namespace std;
 
