@@ -3,6 +3,30 @@
 
 using namespace std;
 
+int getRandomNumber(int param_a, int param_b);
+
+int getSpaceLeft(WINDOW *win_nm, int bs_ch, int box_pos_y, int box_pos_x, int box_height, int box_length);
+
+void getChar(vector<int>& ch, int i, WINDOW* g_winPtr, vector<int>& char_pos_yy, vector<int>& char_pos_xx);
+
+void launchGame (int row, int col);
+
+int showMenu (void);
+
+int main()
+{
+	initscr();
+	curs_set(0);
+
+	showMenu();
+	getch();
+
+	curs_set(1);
+	endwin();
+
+	return (0);
+}		
+
 int getRandomNumber(int param_a, int param_b)
 {
 	random_device rnd_dv;
@@ -31,7 +55,7 @@ int getSpaceLeft(WINDOW *win_nm, int bs_ch, int box_pos_y, int box_pos_x, int bo
 	return (ch_left);
 }
 
-void getChar(std::vector<int>& ch, int i, WINDOW* g_winPtr, std::vector<int>& char_pos_yy, std::vector<int>& char_pos_xx)
+void getChar(vector<int>& ch, int i, WINDOW* g_winPtr, vector<int>& char_pos_yy, vector<int>& char_pos_xx)
 {
 	ch[i] = mvwinch(g_winPtr, char_pos_yy[i], char_pos_xx[i]) & A_CHARTEXT;
 }
@@ -106,7 +130,7 @@ void launchGame(int row, int col)
 			char_pos_yy[i] = char_pos_yy[i] + getRandomNumber(-1, 1);
 			getChar(ch, i, g_winPtr, char_pos_yy, char_pos_xx);
 
-			while ((old_pos_x == char_pos_xx[i] && old_pos_y == char_pos_yy[i]) || ch[i] == (int) '#' || ch[i] == (int) 'X' || ch[i] == (int) '@' || ch[i] == (int) '$')
+			while (ch[i] == (int) '#' || ch[i] == (int) 'X' || ch[i] == (int) '@' || ch[i] == (int) '$')
 			{
 				char_pos_xx[i] = old_pos_x + getRandomNumber(-1, 1);
 				char_pos_yy[i] = old_pos_y + getRandomNumber(-1, 1);
@@ -226,18 +250,4 @@ int showMenu()
 	showMenu();
 
 	return(0);
-}		
-
-int main()
-{
-	initscr();
-	curs_set(0);
-
-	showMenu();
-	getch();
-
-	curs_set(1);
-	endwin();
-
-	return (0);
 }		
