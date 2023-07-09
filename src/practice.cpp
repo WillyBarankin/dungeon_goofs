@@ -163,7 +163,7 @@ void launchGame(int row, int col)
 		move(row-1, 1);
 		printw("Space left: %d	Unit count: %d", ch_left , unit_count);
 		clrtoeol();
-		mvprintw(row-1, col-20, "Press 'q' to stop.", ch_left);
+		mvprintw(row-1, col-20, "Press 'q' to stop.");
 		clrtoeol();
  
 		wrefresh(g_winPtr);
@@ -173,7 +173,7 @@ void launchGame(int row, int col)
 		{
 			timeout(-1);
 			attron(COLOR_PAIR(1));
-			mvprintw(row-1, col-20, "Press 'q' to quit.", ch_left);
+			mvprintw(row-1, col-20, "Press 'q' to quit.");
 			attron(COLOR_PAIR(2));
 			getch();
 			break;
