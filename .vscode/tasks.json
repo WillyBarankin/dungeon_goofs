@@ -1,0 +1,31 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "C/C++: g++.exe build active file",
+			"command": "C:\\Program Files\\msys2\\mingw64\\bin\\gcc.exe",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${file}",
+				"-o",
+				"${workspaceFolder}\\bin\\${fileBasenameNoExtension}.exe",
+				"-I",
+				"${workspaceFolder}\\include",
+				"-L",
+				"${workspaceFolder}\\lib",
+				"-l:pdcurses_x64_mingw.a",
+				"-lstdc++"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: \"C:\\Program Files\\msys2\\mingw64\\bin\\gcc.exe\""
+		}
+	]
+}
