@@ -1,1 +1,3 @@
-First "Hello World"-like project to help me learn C++ and test ncurses library.
+First "Hello World"-like project to help me learn C++ and to check out ncurses functionality.
+
+    This project is a simple game-like application. Upon selecting "New game" and pressing the "j" key, a game area will be generated with randomly placed obstacles and food items. "Goofs" will populate the area and move around, consuming the food and dots on the ground. When a goof eats the food, it will spawn a "pseudogoof," which is a sterile copy of itself. The game will end when all the dots have been eaten.

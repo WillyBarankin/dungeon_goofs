@@ -3,6 +3,8 @@
 
 using namespace std;
 
+// ***************prototypes************** //
+
 int getRandomNumber(int param_a, int param_b);
 
 int getSpaceLeft(WINDOW *win_nm, int bs_ch, int box_pos_y, int box_pos_x, int box_height, int box_length);
@@ -12,6 +14,8 @@ void getChar(vector<int>& ch, int i, WINDOW* g_winPtr, vector<int>& char_pos_yy,
 void launchGame (int row, int col);
 
 int showMenu (void);
+
+// ************************************** //
 
 int main()
 {
