@@ -36,6 +36,10 @@ Dungeon Goofs is a minimal, game-like application that generates a random dungeo
 - **In-game:**
   - `q` — Quit the game
 
+## Platform Compatibility
+
+Dungeon Goofs can be compiled and run on both **Windows** and **Linux** systems. On Windows, it uses PDCurses (included in the `lib/` directory). On Linux, it uses the ncurses library. Please see the Requirements and Building sections below for platform-specific instructions.
+
 ## Requirements
 - C++ compiler
 - PDCurses or ncurses library (for Windows, PDCurses is included in the `lib/` directory)
