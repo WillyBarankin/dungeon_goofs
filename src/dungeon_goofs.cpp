@@ -113,9 +113,9 @@ void launchGame(int row, int col)
 		wattron(g_winPtr, COLOR_PAIR(4));
 		// Place horizontal and vertical obstacles (X)
 		mvwhline(g_winPtr, getRandomNumber(g_win_sy+2, g_win_my-2), getRandomNumber(g_win_sx+2, g_win_mx-5), 'X', getRandomNumber(1, 4));
-		mvvline(g_winPtr, getRandomNumber(g_win_sy+2, g_win_my-4), getRandomNumber(g_win_sx+2, g_win_mx-2), 'X', getRandomNumber(1, 3));
+		mvwvline(g_winPtr, getRandomNumber(g_win_sy+2, g_win_my-4), getRandomNumber(g_win_sx+2, g_win_mx-2), 'X', getRandomNumber(1, 3));
 		// Place food (f)
-		mvvline(g_winPtr, getRandomNumber(g_win_sy+2, g_win_my-2), getRandomNumber(g_win_sx+2, g_win_mx-2), 'f' | COLOR_PAIR(5), 1);
+		mvwvline(g_winPtr, getRandomNumber(g_win_sy+2, g_win_my-2), getRandomNumber(g_win_sx+2, g_win_mx-2), 'f' | COLOR_PAIR(5), 1);
 		wrefresh(g_winPtr);
 	}
 
