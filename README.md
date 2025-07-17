@@ -2,6 +2,9 @@
 
 A simple C++ terminal game inspired by classic 'Hello World' projects, designed to explore ncurses (PDCurses) functionality and basic game logic.
 
+<img width="959" height="512" alt="image" src="https://github.com/user-attachments/assets/1360b2be-af66-49b7-93ee-b1bdfdb1e5a0" />
+
+
 ## Overview
 
 Dungeon Goofs is a minimal, game-like application that generates a random dungeon map filled with obstacles and food. Autonomous units called "goofs" move around the map, consuming food and leaving trails. When a goof eats food, it spawns a "pseudogoof" (a sterile copy). The game ends when there is no free space left on the map.
